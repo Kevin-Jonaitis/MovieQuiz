@@ -1,0 +1,14 @@
+movies:
+id
+title
+year
+director
+
+stars:
+id
+first name
+last name
+
+stars in movies:
+star id
+movie id

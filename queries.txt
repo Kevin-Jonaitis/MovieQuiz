@@ -1,0 +1,146 @@
+Who directed the movie X?
+
+select director, title from movies GROUP BY director ORDER BY RANDOM() LIMIT 4;
+take first director, first movie, and the other 3 directors are wrong;
+
+
+In which movie the stars X and Y appear together?:
+
+CORRECT ANSWERS:
+select first_name, last_name, star_id, title from stars_in_movies, movies, stars where stars_in_movies.star_id = stars.id AND movies.id = stars_in_movies.movie_id AND movie_id IN (select movie_id from stars_in_movies JOIN movies on movies.id = stars_in_movies.movie_id GROUP BY movie_id having COUNT(movie_id) > 2 ORDER BY RANDOM() LIMIT 1) LIMIT 2;
+
+gives 2 ids, 1 name
+
+USING ids from previous query, plug into:
+gives 3 wrong titles
+BAD ANSWERS:
+
+select title from movies where movies.id NOT in (select movies.id from movies JOIN stars_in_movies where movie_id = movies.id AND star_id = 788003 AND movie_id IN (select movie_id from stars_in_movies where star_id = 658016)) ORDER BY RANDOM() LIMIT 3;
+
+
+When was the movie X released?
+
+SELECT title, year from movies GROUP BY year ORDER BY RANDOM() LIMIT 4;
+
+Grab first title. First year is correct answer. Other 3 yeas are incorrect
+
+
+Which star was in the movie X?
+
+
+select title, movie_id,star_id, first_name, last_name from movies inner join stars_in_movies on stars_in_movies.movie_id = movies.id ORDER BY RANDOM() Limit 1;
+
+
+incorrect:
+select star_id, first_name, last_name from stars_in_movies join movies on movies.id = stars_in_movies.movie_id where NOT movie_id = 983007 ORDER BY RANDOM() LIMIT 3;
+
+
+
+get the movie name:
+select title, movie_id from movies ORDER BY RANDOM() LIMIT 1;
+
+get one correct person:
+select star_id,  first_name, last_name from stars_in_movies JOIN stars ON stars.id = stars_in_movies.star_id where movie_id = 140001 ORDER BY RANDOM() LIMIT 1;
+
+get incorrect people:
+select star_id,  first_name, last_name from stars_in_movies JOIN stars ON stars.id = stars_in_movies.star_id where star_id NOT IN (select star_id from stars_in_movies where movie_id = 140001) ORDER BY RANDOM() LIMIT 3;
+
+
+
+Which star was not in the movie X?
+get the movie name:
+select movie_id,title from stars_in_movies join movies on stars_in_movies.movie_id = movies.id GROUP BY movie_id HAVING count(star_id) > 2 ORDER BY RANDOM() LIMIT 1;
+
+INCORRECT:
+select star_id,  first_name, last_name from stars_in_movies JOIN stars ON stars.id = stars_in_movies.star_id where movie_id = 140001 ORDER BY RANDOM() LIMIT 3;
+
+CORRECT:
+select star_id,  first_name, last_name from stars_in_movies JOIN stars ON stars.id = stars_in_movies.star_id where star_id NOT IN (select star_id from stars_in_movies where movie_id = 140001) ORDER BY RANDOM() LIMIT 1;
+
+
+
+
+
+Who directed the star X?
+
+get star ID:
+
+select id from stars ORDER BY RANDOM() LMIIT 1;
+
+get good choice:
+
+select director from movies inner join stars_in_movies on movies.id = stars_in_movies.movie_id WHERE movies.id IN (select movie_id from stars_in_movies where star_id = 326112) GROUP BY director LIMIT 1;
+
+get bad choices:
+select director from movies inner join stars_in_movies on movies.id = stars_in_movies.movie_id WHERE movies.id NOT IN (select movie_id from stars_in_movies where star_id = 326112) GROUP BY director LIMIT 3;
+
+
+
+
+Who did not direct the star X?
+
+get star ID:
+
+select star_id from stars_in_movies INNER JOIN movies ON movies.id = stars_in_movies.movie_id GROUP BY star_id HAVING COUNT(director) > 3 ORDER BY RANDOM() LIMIT 1;
+
+get good choice:
+
+select director from movies inner join stars_in_movies on movies.id = stars_in_movies.movie_id WHERE movies.id IN (select movie_id from stars_in_movies where star_id = 326112) GROUP BY director LIMIT 3;
+
+get bad choices:
+select director from movies inner join stars_in_movies on movies.id = stars_in_movies.movie_id WHERE movies.id NOT IN (select movie_id from stars_in_movies where star_id = 326112) GROUP BY director LIMIT 1;
+
+
+
+
+
+Which star appears in both movies X and Y?
+
+get star name, id:
+
+select first_name, last_name, star_id from stars JOIN stars_in_movies ON stars.id = stars_in_movies.star_id group by star_id HAVING count(distinct movie_id) > 1 ORDER BY RANDOM() LIMIT 1;
+
+
+kate beckinsale 693106
+
+get movies:
+select movie_id, title from stars_in_movies join movies on movies.id = stars_in_movies.movie_id where star_id = 693106 ORDER BY RANDOM() LIMIT 2;
+
+select star_id from stars_in_movies where NOT (movie_id = 12345 AND movie_id = 43535);
+
+
+select movie_id, title from stars_in_movies join movies on movies.id = stars_in_movies.movie_id where NOT star_id = 693106 ORDER BY RANDOM() LIMIT 3;
+
+
+
+
+Which star did not appear in the same movie with the star X?
+
+
+get star name and id:
+select star_id, first_name, last_name from stars_in_movies join stars on stars.id = stars_in_movies.star_id group by star_id HAVING count (movie_id) > 3 ORDER BY RANDOM()  LIMIT 1;
+
+incorrect answers:
+select star_id, first_name, last_name from stars_in_movies join stars on stars.id = stars_in_movies.star_id  where movie_id in (select movie_id from stars_in_movies where star_id = 855102) AND NOT star_id = 855102 ORDER BY RANDOM() LIMIT 3;
+
+correct answer:
+select star_id, first_name, last_name from stars_in_movies join stars on stars.id = stars_in_movies.star_id where movie_id NOT in (select movie_id from stars_in_movies where star_id = 855102) AND NOT star_id = 855102 ORDER BY RANDOM() LIMIT 1;
+
+
+
+
+Who directed the star X in year Y?
+
+get star id, name, director, year
+CORRECT ANSWER;
+select first_name, last_name, director, star_id, year from stars_in_movies join movies on stars_in_movies.movie_id = movies.id join stars on stars_in_movies.star_id = stars.id ORDER BY RANDOM() LIMIT 1;
+starid = 907007
+year = 2005;
+
+WRONG ANSWERS:
+select director from movies join stars_in_movies on movies.id = stars_in
+_movies.movie_id join stars on stars.id = stars_in_movies.star_id where NOT (yea
+r = 2005 AND star_id = 907007) ORDER BY RANDOM() LIMIT 3;
+
+
+select star_id, first_name, last_name from stars_in_movies join stars on stars.id = stars_in_movies.star_id where movie_id in (select movie_id from stars_in_movies having count(distinct star_id) > 3) ORDER BY RANDOM() LIMIT 1;
